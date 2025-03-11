@@ -49,5 +49,48 @@ This project covers the complete data science workflow:
 - **PyArrow & Parquet** for optimized data storage  
 - **Joblib** for model serialization  
 
+# ⚙️ Setting Up the Project  
+
+To run this project on another computer, follow these steps:
+
+## 1️⃣ **Clone the Repository**  
+First, clone the GitHub repository to your local machine:  
+
+```bash
+git clone https://github.com/alejolondonm/NYC-houses.git
+cd NYC-houses
+```
+
+## 2️⃣ Set Up the Virtual Environment
+This project uses a virtual environment to manage dependencies. To create and activate it, run:
+
+```
+# Create a virtual environment
+python -m venv .venv  
+
+# Activate the virtual environment  
+# Windows (PowerShell)
+.venv\Scripts\Activate  
+```
+```
+# macOS/Linux  
+source .venv/bin/activate  
+```
+## 3️⃣ Install uv for Dependency Management
+```
+pip install uv
+```
+## 4️⃣ Install Dependencies with uv
+```
+python -m uv pip install -r uv.lock
+```
+
+# 🚀 Running the Project
+After installing dependencies, you can now execute the notebooks in the project as needed.
+
+### 🛑 Deactivate the Virtual Environment
+```
+deactivate
+```
 
 # 🚀✨
