@@ -103,13 +103,9 @@ At the end of training, you'll see:
 - **R²** score on the test set  
 - Best hyperparameters found by GridSearch  
 
----
-
 ### 🛑 Deactivate the Virtual Environment  
 ```bash
 deactivate
 ```
-
----
 
 # 🚀✨
