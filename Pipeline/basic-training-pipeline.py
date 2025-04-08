@@ -50,9 +50,7 @@ def cleaning(df: pd.DataFrame) -> pd.DataFrame:
     # Nullify extreme outliers
     if "TOTAL UNITS" in df.columns:
         df.loc[df["TOTAL UNITS"] > TOTAL_UNITS_THRESHOLD, "TOTAL UNITS"] = np.nan
-    df.loc[df["COMMERCIAL UNITS"] > COMMERCIAL_UNITS_THRESHOLD, "COMMERCIAL UNITS"] = (
-        np.nan
-    )
+    df.loc[df["COMMERCIAL UNITS"] > COMMERCIAL_UNITS_THRESHOLD, "COMMERCIAL UNITS"] = np.nan
 
     # Remove outliers
     lower_bound = df["SALE PRICE"].quantile(0.028)
@@ -139,9 +137,7 @@ X = df.drop("SALE PRICE", axis=1)
 Y = df["SALE PRICE"]
 
 # 80% train, 20% test
-x_train, x_test, y_train, y_test = train_test_split(
-    X, Y, test_size=0.2, random_state=42
-)
+x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
 
 # ----------------------
 # 3. Define Pipelines
