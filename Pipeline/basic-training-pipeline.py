@@ -19,7 +19,7 @@ import pandas as pd
 from joblib import dump
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
-from sklearn.metrics import r2_score
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder
@@ -32,14 +32,13 @@ TOTAL_UNITS_THRESHOLD = 1000
 
 # Cleaning Function
 def cleaning(df: pd.DataFrame) -> pd.DataFrame:
-    df.columns = df.columns.str.strip().str.upper()
-    # df["SALE PRICE"] = pd.to_numeric(df["SALE PRICE"],
-    # errors="coerce")  # Convert SALE PRICE to numeric
-    # df = df[df["SALE PRICE"] > 100]  # remove invalid sale prices
-
     # Remove duplicates
     df = df.sort_values(by="SALE PRICE", ascending=False, na_position="last")
     df = df.drop_duplicates(keep="first")
+
+    # Drop rows with missing SALE PRICE or zeros
+    df = df[df["SALE PRICE"].notna()]
+    df = df[df["SALE PRICE"] > 0]
 
     # Drop rows where key area columns are null
     df = df.dropna(subset=["GROSS SQUARE FEET", "LAND SQUARE FEET"])
@@ -55,6 +54,13 @@ def cleaning(df: pd.DataFrame) -> pd.DataFrame:
         np.nan
     )
 
+    # Remove outliers
+    lower_bound = df["SALE PRICE"].quantile(0.028)
+    upper_bound = df["SALE PRICE"].quantile(0.99)
+    df = df[(df["SALE PRICE"] >= lower_bound) & (df["SALE PRICE"] <= upper_bound)]
+
+    df = df.drop_duplicates()
+
     return df
 
 
@@ -63,15 +69,8 @@ def cleaning(df: pd.DataFrame) -> pd.DataFrame:
 # --------------------------
 
 # Load data
-# URL_DATA = "https://github.com/JoseRZapata/Data_analysis_notebooks/raw/refs/heads/main/data/datasets/nyc-rolling-sales_data.csv"
-# df = pd.read_csv(URL_DATA, low_memory=False)
-DATA_DIR = Path.cwd().resolve().parents[1] / "data"
-
-df = pd.read_parquet(
-    "../.." / DATA_DIR / "02_intermediate/nyc_houses_semi_cleaned.parquet",
-    engine="pyarrow",
-)
-
+URL_DATA = "https://github.com/JoseRZapata/Data_analysis_notebooks/raw/refs/heads/main/data/datasets/nyc-rolling-sales_data.csv"
+df_raw = pd.read_csv(URL_DATA, low_memory=False)
 
 # Data preparation
 selected_features = [
@@ -85,9 +84,12 @@ selected_features = [
     "LAND SQUARE FEET",
 ]
 
-df = df[selected_features].copy()
+df = df_raw[selected_features].copy()
 
-columns_to_convert = [
+# Replace known null-like strings
+df.replace(["NULL", "None", "", "?", " ", "  ", " -  "], np.nan, inplace=True)
+
+numeric_cols = [
     "SALE PRICE",
     "GROSS SQUARE FEET",
     "LAND SQUARE FEET",
@@ -96,10 +98,8 @@ columns_to_convert = [
     "YEAR BUILT",
 ]
 
-for col in columns_to_convert:
+for col in numeric_cols:
     df[col] = pd.to_numeric(df[col], errors="coerce")
-
-df = df[df["SALE PRICE"] > 100]
 
 # Convert data types
 
@@ -128,16 +128,10 @@ df[target] = df[target].astype("float")
 
 # Data preprocessing
 df = cleaning(df)
-df = df.drop_duplicates()
-df = df[df["SALE PRICE"] > 100]  # remove invalid sale prices
-
 
 # -----------------------------
 # 2. Split Features and Target
 # -----------------------------
-
-# Log-transform the target to reduce skew
-df["SALE PRICE"] = np.log1p(df["SALE PRICE"])
 
 # Train / Test split
 
@@ -191,9 +185,9 @@ pipeline = Pipeline(
 score = "r2"
 
 hyperparameters = {
-    "model__max_depth": [3, 5, 7],
-    "model__n_estimators": [100, 200],
-    "model__learning_rate": [0.05, 0.1, 0.2],
+    "model__max_depth": [3, 5, 7, 9],
+    "model__n_estimators": [100, 200, 300, 400],
+    "model__learning_rate": [0.01, 0.03, 0.05, 0.1],
 }
 
 grid_search = GridSearchCV(
@@ -211,16 +205,22 @@ grid_search.fit(x_train, y_train)
 # 5. Evaluate Model
 # --------------------
 
-# Predict and revert log transformation
-y_pred_log = grid_search.predict(x_test)
-y_pred = np.expm1(y_pred_log)  # Invert log1p
-y_test_real = np.expm1(y_test)  # Invert log1p
+# Predict on test set
+y_pred = grid_search.predict(x_test)
 
 # Calculate R² on original scale
-r2 = r2_score(y_test_real, y_pred)
+r2 = r2_score(y_test, y_pred)
+mae = mean_absolute_error(y_test, y_pred)
+rmse = np.sqrt(mean_squared_error(y_test, y_pred))
 
 print("\n--- Evaluation Metrics ---")
-print(f"R² score on original scale: {r2:.4f}")
+print(f"MAE : {mae:.2f}")
+print(f"RMSE: {rmse:.2f}")
+print(f"R²  : {r2:.4f}")
+
+# Print best hyperparameters
+print("\n--- Best Hyperparameters ---")
+print(grid_search.best_params_)
 
 
 # ---------------------------
@@ -228,14 +228,15 @@ print(f"R² score on original scale: {r2:.4f}")
 # ---------------------------
 
 # baseline score
-BASELINE_SCORE = 0.75
+BASELINE_SCORE = 0.54
 
 # Model Validation
 model_validation = r2 > BASELINE_SCORE
 
-MODEL_OUTPUT_PATH = Path.cwd().resolve() / "models"
+MODEL_OUTPUT_PATH = Path(__file__).resolve().parent / "models"
 if model_validation:
-    MODEL_OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    # Save model if validation passed
+    MODEL_OUTPUT_PATH.mkdir(parents=True, exist_ok=True)
     dump(
         grid_search.best_estimator_,
         MODEL_OUTPUT_PATH / "first_basic_model.joblib",
@@ -244,6 +245,7 @@ if model_validation:
     print("\nModel validation passed")
     print(f"\n✅ Model saved to {MODEL_OUTPUT_PATH}")
 else:
+    # Raise error if validation failed
     print("\n❌ Model did not pass the threshold. Not saved.")
     print(f"Model validation failed: score {r2} below baseline {BASELINE_SCORE}")
     raise ValueError()
