@@ -1,12 +1,12 @@
 [project]
 name = "nyc-houses"
 version = "0.1.0"
-description = "NYC Houses project: A data science solution from start to finish."
+description = "NYC Houses project"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.11,<3.12"
 
 dependencies = [
-    "numpy>=1.26.0",
+    "numpy>=1.24.0,<1.27",
     "pandas==2.0.3",
     "pyarrow==19.0.0",
     "matplotlib==3.7.1",
@@ -16,6 +16,5 @@ dependencies = [
     "xgboost==1.7.3",
     "joblib==1.2.0",
     "dython==0.7.4",
-    "streamlit==1.33.0",
-    "setuptools>=68.0.0",
+    "streamlit==1.33.0"
 ]
