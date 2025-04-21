@@ -18,3 +18,6 @@ dependencies = [
     "dython==0.7.4",
     "streamlit==1.33.0"
 ]
+
+# 👇 Evita que Streamlit intente instalar el proyecto como paquete
+package-mode = false
