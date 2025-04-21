@@ -16,13 +16,43 @@ def get_user_input() -> pd.DataFrame:
     """Collect user input from the sidebar and return it as a DataFrame."""
     st.sidebar.header("🏡 Property Details")
 
-    borough = st.sidebar.selectbox("Borough", options=[1, 2, 3, 4, 5])
-    tax_class = st.sidebar.selectbox("Tax Class at Time of Sale", options=[1.0, 2.0, 3.0, 4.0])
-    year_built = st.sidebar.slider("Year Built", min_value=1800, max_value=2025, value=1980)
-    gross_sqft = st.sidebar.number_input("Gross Square Feet", min_value=100, max_value=200000, value=3000)
-    land_sqft = st.sidebar.number_input("Land Square Feet", min_value=100, max_value=200000, value=1500)
-    residential_units = st.sidebar.number_input("Residential Units", min_value=0, max_value=50, value=2)
-    commercial_units = st.sidebar.number_input("Commercial Units", min_value=0, max_value=50, value=0)
+    borough = st.sidebar.selectbox(
+        "Borough", 
+        options=[1, 2, 3, 4, 5]
+        )
+    
+    tax_class = st.sidebar.selectbox(
+        "Tax Class at Time of Sale", 
+        options=[1.0, 2.0, 3.0, 4.0]
+        )
+    
+    year_built = st.sidebar.slider(
+        "Year Built", 
+        min_value=1800, max_value=2025, 
+        value=1980
+        )
+    
+    gross_sqft = st.sidebar.number_input(
+        "Gross Square Feet", 
+        min_value=100, max_value=200000, 
+        value=3000)
+    
+    land_sqft = st.sidebar.number_input(
+        "Land Square Feet", 
+        min_value=100, max_value=200000, 
+        value=1500)
+    
+    residential_units = st.sidebar.number_input(
+        "Residential Units", 
+        min_value=0, max_value=50, 
+        value=2
+        )
+    
+    commercial_units = st.sidebar.number_input(
+        "Commercial Units", 
+        min_value=0, max_value=50, 
+        value=0
+        )
 
     user_data = pd.DataFrame.from_dict(
         {
@@ -38,14 +68,14 @@ def get_user_input() -> pd.DataFrame:
     return user_data
 
 
-def main():
+def main() -> None:
     st.set_page_config(page_title="NYC House Price Predictor 🏠", page_icon="📊")
 
     st.title("📊 NYC House Price Estimator")
     st.write("Estimate the sale price of a property in New York City using our trained machine learning model.")
 
     # Load model
-    model_path = os.path.join("Deployment", "first_basic_model.joblib")
+    model_path = os.path.join("Modeling", "nyc_houses_regression-xgboost-v1.joblib")
     model = load_model(model_path)
 
     # User input
