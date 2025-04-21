@@ -3,7 +3,7 @@ name = "nyc-houses"
 version = "0.1.0"
 description = "NYC Houses project: A data science solution from start to finish."
 readme = "README.md"
-requires-python = ">=3.9,<3.9.7 || >3.9.7,<3.12"
+requires-python = ">=3.9,<3.13"
 
 dependencies = [
     "numpy==1.24.3",
