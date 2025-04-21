@@ -19,6 +19,3 @@ dependencies = [
     "streamlit==1.33.0",
     "setuptools>=68.0.0",
 ]
-
-[tool.setuptools]
-packages = ["nyc_houses"]
