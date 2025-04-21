@@ -4,7 +4,6 @@ import pickle
 import pandas as pd
 import sklearn.compose._column_transformer as ct
 import streamlit as st
-from sklearn.pipeline import Pipeline
 
 # 🔧 Compatibilidad entre versiones
 ct._RemainderColsList = list
@@ -12,11 +11,18 @@ ct._RemainderColsList = list
 
 # 🚀 NYC Housing Price Predictor App
 @st.cache_resource
-def load_model(model_path: str) -> Pipeline:
-    """Load the trained XGBoost model from disk, even with version mismatches."""
+def load_model(model_path: str):
+    """Load the trained model from disk, even with version mismatches."""
     with st.spinner("Loading model..."):
         with open(model_path, "rb") as f:
-            return pickle.load(f)
+            model = pickle.load(f)
+
+        # 🛑 Validación de que el modelo es un pipeline con método predict
+        if not hasattr(model, "predict"):
+            st.error("❌ El archivo cargado no contiene un modelo válido.")
+            st.stop()
+
+        return model
 
 
 def get_user_input() -> pd.DataFrame:
@@ -79,7 +85,11 @@ def main() -> None:
     input_df = get_user_input()
 
     # Prediction
-    prediction = model.predict(input_df)[0]
+    try:
+        prediction = model.predict(input_df)[0]
+    except Exception as e:
+        st.error(f"🚨 Error during prediction: {e}")
+        st.stop()
 
     # Result display
     st.markdown("---")
