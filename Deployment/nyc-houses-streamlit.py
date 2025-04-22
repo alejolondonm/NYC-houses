@@ -56,11 +56,11 @@ def main() -> None:
 
     st.image("Deployment/ts-nyc.jpg")
 
+    title1 = "Estimate the sale price of a property in New York City"
+    title2 = " using our trained machine learning model."
+
     st.title("📊 NYC House Price Estimator")
-    st.write(
-        "Estimate the sale price of a property in New York City"
-        " using our trained machine learning model."
-    )
+    st.write(title1 + title2)
 
     # Load model
     model_path = os.path.join("Deployment", "first_basic_model.joblib")
