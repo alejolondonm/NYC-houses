@@ -1,22 +1,15 @@
 import os
 
 import pandas as pd
-import sklearn.compose._column_transformer as ct
 import streamlit as st
 from joblib import load
 from sklearn.pipeline import Pipeline
 
-# 🔧 Compatibilidad entre versiones
-ct._RemainderColsList = list
-
-
 # 🚀 NYC Housing Price Predictor App
-# @st.cache_resource
 def load_model(model_path: str) -> Pipeline:
     """Load the trained XGBoost model from disk using joblib."""
     with st.spinner("Loading model..."):
         return load(model_path)
-
 
 def get_user_input() -> pd.DataFrame:
     """Collect user input from the sidebar and return it as a DataFrame."""
