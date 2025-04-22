@@ -1,3 +1,5 @@
+import os
+
 import pandas as pd
 import sklearn.compose._column_transformer as ct
 import streamlit as st
@@ -69,7 +71,7 @@ def main() -> None:
     )
 
     # Load model
-    model_path = "first_basic_model.joblib"
+    model_path = os.path.join("Deployment", "first_basic_model.joblib")
     model = load_model(model_path)
 
     # User input
