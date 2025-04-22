@@ -5,11 +5,13 @@ import streamlit as st
 from joblib import load
 from sklearn.pipeline import Pipeline
 
+
 # 🚀 NYC Housing Price Predictor App
 def load_model(model_path: str) -> Pipeline:
     """Load the trained XGBoost model from disk using joblib."""
     with st.spinner("Loading model..."):
         return load(model_path)
+
 
 def get_user_input() -> pd.DataFrame:
     """Collect user input from the sidebar and return it as a DataFrame."""
