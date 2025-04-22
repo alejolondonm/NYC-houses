@@ -17,13 +17,9 @@ def get_user_input() -> pd.DataFrame:
 
     borough = st.sidebar.selectbox("Borough", options=[1, 2, 3, 4, 5])
 
-    tax_class = st.sidebar.selectbox(
-        "Tax Class at Time of Sale", options=[1.0, 2.0, 4.0]
-    )
+    tax_class = st.sidebar.selectbox("Tax Class at Time of Sale", options=[1.0, 2.0, 4.0])
 
-    year_built = st.sidebar.slider(
-        "Year Built", min_value=1800, max_value=2025, value=1935
-    )
+    year_built = st.sidebar.slider("Year Built", min_value=1800, max_value=2025, value=1935)
 
     gross_sqft = st.sidebar.number_input(
         "Gross Square Feet", min_value=100, max_value=700000, value=3000
@@ -41,15 +37,17 @@ def get_user_input() -> pd.DataFrame:
         "Commercial Units", min_value=0, max_value=175, value=0
     )
 
-    user_data = pd.DataFrame.from_dict({
-        "BOROUGH": [borough],
-        "TAX CLASS AT TIME OF SALE": [tax_class],
-        "YEAR BUILT": [year_built],
-        "GROSS SQUARE FEET": [gross_sqft],
-        "LAND SQUARE FEET": [land_sqft],
-        "RESIDENTIAL UNITS": [residential_units],
-        "COMMERCIAL UNITS": [commercial_units],
-    })
+    user_data = pd.DataFrame.from_dict(
+        {
+            "BOROUGH": [borough],
+            "TAX CLASS AT TIME OF SALE": [tax_class],
+            "YEAR BUILT": [year_built],
+            "GROSS SQUARE FEET": [gross_sqft],
+            "LAND SQUARE FEET": [land_sqft],
+            "RESIDENTIAL UNITS": [residential_units],
+            "COMMERCIAL UNITS": [commercial_units],
+        }
+    )
     return user_data
 
 
@@ -60,7 +58,8 @@ def main() -> None:
 
     st.title("📊 NYC House Price Estimator")
     st.write(
-        "Estimate the sale price of a property in New York City using our trained machine learning model."
+        "Estimate the sale price of a property in New York City" +
+        " using our trained machine learning model."
     )
 
     # Load model
@@ -73,19 +72,19 @@ def main() -> None:
     # Prediction
     prediction = model.predict(input_df)[0]
 
+    # Values
+    low = 500000
+    mid = 1500000
+
     # Result display
     st.markdown("---")
     st.subheader("💵 Predicted Sale Price")
-    if prediction < 500000:
-        st.error(
-            f"Estimated Price: ${prediction:,.0f} 😬 That's quite affordable for NYC."
-        )
-    elif prediction < 1500000:
+    if prediction < low:
+        st.error(f"Estimated Price: ${prediction:,.0f} 😬 That's quite affordable for NYC.")
+    elif prediction < mid:
         st.warning(f"Estimated Price: ${prediction:,.0f} 🏙️ Mid-range NYC property.")
     else:
-        st.success(
-            f"Estimated Price: ${prediction:,.0f} 💎 You're in luxury territory!"
-        )
+        st.success(f"Estimated Price: ${prediction:,.0f} 💎 You're in luxury territory!")
 
     st.markdown("---")
     st.caption("Model: XGBoost | Data source: NYC Rolling Sales Dataset")
