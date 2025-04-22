@@ -56,8 +56,7 @@ def get_user_input() -> pd.DataFrame:
 def main() -> None:
     st.set_page_config(page_title="NYC House Price Predictor 🏠", page_icon="📊")
 
-    image_path = os.path.join(os.path.dirname(__file__), "ts-nyc.jpg")
-    st.image(image_path)
+    st.image("Deployment/ts-nyc.jpg")
 
     title1 = "Estimate the sale price of a property in New York City"
     title2 = " using our trained machine learning model."
