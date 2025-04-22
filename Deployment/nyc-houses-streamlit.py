@@ -1,9 +1,9 @@
 import os
-import pickle
 
 import pandas as pd
 import sklearn.compose._column_transformer as ct
 import streamlit as st
+from joblib import load
 from sklearn.pipeline import Pipeline
 
 # 🔧 Compatibilidad entre versiones
@@ -13,10 +13,9 @@ ct._RemainderColsList = list
 # 🚀 NYC Housing Price Predictor App
 @st.cache_resource
 def load_model(model_path: str) -> Pipeline:
-    """Load the trained XGBoost model from disk, even with version mismatches."""
+    """Load the trained XGBoost model from disk using joblib."""
     with st.spinner("Loading model..."):
-        with open(model_path, "rb") as f:
-            return pickle.load(f)
+        return load(model_path)
 
 
 def get_user_input() -> pd.DataFrame:
