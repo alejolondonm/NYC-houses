@@ -11,7 +11,7 @@ ct._RemainderColsList = list
 
 
 # 🚀 NYC Housing Price Predictor App
-@st.cache_resource
+# @st.cache_resource
 def load_model(model_path: str) -> Pipeline:
     """Load the trained XGBoost model from disk using joblib."""
     with st.spinner("Loading model..."):
