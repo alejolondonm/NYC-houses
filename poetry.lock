@@ -1732,18 +1732,18 @@ watchmedo = ["PyYAML (>=3.10)"]
 
 [[package]]
 name = "xgboost"
-version = "1.7.3"
+version = "1.6.2"
 description = "XGBoost Python Package"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.7"
 groups = ["main"]
 files = [
-    {file = "xgboost-1.7.3-py3-none-macosx_10_15_x86_64.macosx_11_0_x86_64.macosx_12_0_x86_64.whl", hash = "sha256:4a8985b2a874bd65b31869c325bb80051a2c28cedc16805928e2dcfb55fa25ce"},
-    {file = "xgboost-1.7.3-py3-none-macosx_12_0_arm64.whl", hash = "sha256:86dfc7d7da6fae751dc5c316e862f3395d9eddef5d10622a43d47deceb3257df"},
-    {file = "xgboost-1.7.3-py3-none-manylinux2014_aarch64.whl", hash = "sha256:457fa32b39b8bfa8a94eea6b932cb4d945c7a41fcd26e69a1f1dd843179eaccc"},
-    {file = "xgboost-1.7.3-py3-none-manylinux2014_x86_64.whl", hash = "sha256:fab7aeb508f0dbbd4dc7a4569a80ed07632bca3bd91b5490d043d4a33b138a39"},
-    {file = "xgboost-1.7.3-py3-none-win_amd64.whl", hash = "sha256:719e13ac9246b297fb93dd4ee772947f6ec693c46f1adb8cdeb3d3e98e5c08fb"},
-    {file = "xgboost-1.7.3.tar.gz", hash = "sha256:d1ee270b67e8fc5b90002e17493d1c910ae6abe856e6d0d86c619c0002e7c7d1"},
+    {file = "xgboost-1.6.2-py3-none-macosx_10_15_x86_64.macosx_11_0_x86_64.macosx_12_0_x86_64.whl", hash = "sha256:ddc5dc97ef604b61df6cae34a73ead880dfbc9008e291d98f19b08481c0549d7"},
+    {file = "xgboost-1.6.2-py3-none-macosx_12_0_arm64.whl", hash = "sha256:71dd3e27477bc84cc605219d95717fe872e4428a27d6d3dfd7acf0a7f8aa81f7"},
+    {file = "xgboost-1.6.2-py3-none-manylinux2014_aarch64.whl", hash = "sha256:64f5c7189ccea717c6ac2a10ddf1f825f2be0fb829ed96d9ec3a7588b04b7922"},
+    {file = "xgboost-1.6.2-py3-none-manylinux2014_x86_64.whl", hash = "sha256:ba0babafd72edcc12193f545331ce5ef8fbf0fd4f241fcd65e71aeb45b957fe6"},
+    {file = "xgboost-1.6.2-py3-none-win_amd64.whl", hash = "sha256:1ce15d3292d6ee75be4491ff6463c76ca548b7d77ca70f707cb23ea051e2faf7"},
+    {file = "xgboost-1.6.2.tar.gz", hash = "sha256:e1f5c91ba88cf8edb409d7fd2ca150dcd80b6f2115587d87365f0c10b2d4f009"},
 ]
 
 [package.dependencies]
@@ -1755,10 +1755,9 @@ dask = ["dask", "distributed", "pandas"]
 datatable = ["datatable"]
 pandas = ["pandas"]
 plotting = ["graphviz", "matplotlib"]
-pyspark = ["cloudpickle", "pyspark", "scikit-learn"]
 scikit-learn = ["scikit-learn"]
 
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<3.12"
-content-hash = "545d70f767971c02cdec0d49b52589eaf83a7e59edc5cd42e3b553afb2c2e0d8"
+content-hash = "6458f27c145cb69b9ae0cdfd1cfdfcc11f4236bb5d1ec6c02f71def1c8cf5712"
