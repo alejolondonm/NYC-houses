@@ -72,7 +72,7 @@ def main() -> None:
     )
 
     # Load model
-    model_path = os.path.join("Modeling", "nyc_houses_regression-xgboost-v1.joblib")
+    model_path = os.path.join("Deployment", "first_basic_model.joblib")
     model = load_model(model_path)
 
     # User input
