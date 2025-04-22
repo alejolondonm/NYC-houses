@@ -58,8 +58,8 @@ def main() -> None:
 
     st.title("📊 NYC House Price Estimator")
     st.write(
-        "Estimate the sale price of a property in New York City" +
-        " using our trained machine learning model."
+        "Estimate the sale price of a property in New York City"
+        + " using our trained machine learning model."
     )
 
     # Load model
