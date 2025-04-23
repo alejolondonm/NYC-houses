@@ -4,3 +4,8 @@ venv/
 .venv/
 .env/
 __pycache__/
+*.egg-info/
+*.spec
+build/
+dist/
+.vscode/
