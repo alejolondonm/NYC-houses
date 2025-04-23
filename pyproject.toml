@@ -3,7 +3,7 @@ name = "nyc-houses"
 version = "0.1.0"
 description = "NYC Houses project"
 readme = "README.md"
-packages = [{ include = "Deployment" }]
+packages = [{ include = "4-Deployment" }]
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"

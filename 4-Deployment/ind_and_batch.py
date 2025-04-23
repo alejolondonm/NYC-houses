@@ -10,17 +10,22 @@ def load_model(model_path: str) -> Pipeline:
     with st.spinner("Loading model..."):
         return load(model_path)
 
-# 🧍 individual Prediction
-def get_user_input() -> pd.DataFrame:
-    st.sidebar.header("🏡 Property Details")
+# 🧍 Individual Prediction
+def get_user_input_inside_tab() -> pd.DataFrame:
+    st.header("🏡 Property Details")
 
-    borough = st.sidebar.selectbox("Borough", options=[1, 2, 3, 4, 5])
-    tax_class = st.sidebar.selectbox("Tax Class at Time of Sale", options=[1.0, 2.0, 4.0])
-    year_built = st.sidebar.slider("Year Built", min_value=1800, max_value=2025, value=1935)
-    gross_sqft = st.sidebar.number_input("Gross Square Feet", min_value=100, max_value=700000, value=3000)
-    land_sqft = st.sidebar.number_input("Land Square Feet", min_value=100, max_value=3500000, value=1500)
-    residential_units = st.sidebar.number_input("Residential Units", min_value=0, max_value=800, value=2)
-    commercial_units = st.sidebar.number_input("Commercial Units", min_value=0, max_value=175, value=0)
+    col1, col2 = st.columns(2)
+
+    with col1:
+        borough = st.selectbox("Borough", options=[1, 2, 3, 4, 5])
+        tax_class = st.selectbox("Tax Class at Time of Sale", options=[1.0, 2.0, 4.0])
+        year_built = st.slider("Year Built", min_value=1800, max_value=2025, value=1935)
+        
+    with col2:
+        gross_sqft = st.number_input("Gross Square Feet", min_value=100, max_value=700000, value=3000)
+        land_sqft = st.number_input("Land Square Feet", min_value=100, max_value=3500000, value=1500)
+        commercial_units = st.number_input("Commercial Units", min_value=0, max_value=175, value=0)
+        residential_units = st.number_input("Residential Units", min_value=0, max_value=800, value=2)
 
     return pd.DataFrame.from_dict({
         "BOROUGH": [borough],
@@ -32,10 +37,11 @@ def get_user_input() -> pd.DataFrame:
         "COMMERCIAL UNITS": [commercial_units],
     })
 
+
 def individual_prediction_tab(model: Pipeline):
-    input_df = get_user_input()
+    input_df = get_user_input_inside_tab()
     prediction = model.predict(input_df)[0]
-    
+
     st.subheader("💵 Predicted Sale Price")
     if prediction < 500000:
         st.error(f"Estimated Price: ${prediction:,.0f} 😬 That's quite affordable for NYC.")
@@ -47,7 +53,7 @@ def individual_prediction_tab(model: Pipeline):
 # 📦 Batch Prediction
 def preprocess_batch_data(df: pd.DataFrame) -> pd.DataFrame:
     for col in [
-        "BOROUGH", "TAX CLASS AT TIME OF SALE", "YEAR BUILT", 
+        "BOROUGH", "TAX CLASS AT TIME OF SALE", "YEAR BUILT",
         "GROSS SQUARE FEET", "LAND SQUARE FEET", "RESIDENTIAL UNITS", "COMMERCIAL UNITS"
     ]:
         df[col] = pd.to_numeric(df[col], errors="coerce")
@@ -64,7 +70,7 @@ def batch_prediction_tab(model: Pipeline):
             st.dataframe(df.head())
 
             required_cols = [
-                "BOROUGH", "TAX CLASS AT TIME OF SALE", "YEAR BUILT", 
+                "BOROUGH", "TAX CLASS AT TIME OF SALE", "YEAR BUILT",
                 "GROSS SQUARE FEET", "LAND SQUARE FEET", "RESIDENTIAL UNITS", "COMMERCIAL UNITS"
             ]
             missing_cols = [col for col in required_cols if col not in df.columns]
@@ -99,17 +105,13 @@ def batch_prediction_tab(model: Pipeline):
             "COMMERCIAL UNITS": [0, 1],
         }))
 
-# 🧠 Función principal
+# 🧠 Main
 def main():
     st.set_page_config(page_title="NYC Price Estimator", page_icon="📊")
     st.image("4-Deployment/ts-nyc.jpg")
 
-
-    title1 = "Estimate the sale price of a property in New York City"
-    title2 = " using our trained machine learning model."
-
     st.title("📊 NYC House Price Estimator")
-    st.write(title1 + title2)
+    st.write("Estimate the sale price of a property in New York City using our trained machine learning model.")
 
     model_path = os.path.join("4-Deployment", "first_basic_model.joblib")
     model = load_model(model_path)
