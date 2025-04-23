@@ -45,7 +45,8 @@ def cleaning(df: pd.DataFrame) -> pd.DataFrame:
 
     # Replace 0s with NaNs in important columns
     columns_to_nullify = ["GROSS SQUARE FEET", "LAND SQUARE FEET", "YEAR BUILT"]
-    df[columns_to_nullify] = df[columns_to_nullify].replace(0, np.nan)
+    for col in columns_to_nullify:
+        df[col] = df[col].apply(lambda x: np.nan if x is not None and (x <= 0) else x)
 
     # Nullify extreme outliers
     if "TOTAL UNITS" in df.columns:
