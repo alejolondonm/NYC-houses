@@ -56,7 +56,7 @@ def get_user_input() -> pd.DataFrame:
 def main() -> None:
     st.set_page_config(page_title="NYC House Price Predictor 🏠", page_icon="📊")
 
-    st.image("Deployment/ts-nyc.jpg")
+    st.image("4-Deployment/ts-nyc.jpg")
 
     title1 = "Estimate the sale price of a property in New York City"
     title2 = " using our trained machine learning model."
@@ -65,7 +65,7 @@ def main() -> None:
     st.write(title1 + title2)
 
     # Load model
-    model_path = os.path.join("Deployment", "first_basic_model.joblib")
+    model_path = os.path.join("4-Deployment", "first_basic_model.joblib")
     model = load_model(model_path)
 
     # User input
