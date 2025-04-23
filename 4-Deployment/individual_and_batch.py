@@ -14,18 +14,56 @@ def load_model(model_path: str) -> Pipeline:
 def get_user_input_inside_tab() -> pd.DataFrame:
     st.header("🏡 Property Details")
 
+    BOROUGH_MAPPING = {
+        "Manhattan": 1,
+        "Bronx": 2,
+        "Brooklyn": 3,
+        "Queens": 4,
+        "Staten Island": 5,
+    }
+
     col1, col2 = st.columns(2)
 
     with col1:
-        borough = st.selectbox("Borough", options=[1, 2, 3, 4, 5])
-        tax_class = st.selectbox("Tax Class at Time of Sale", options=[1.0, 2.0, 4.0])
-        year_built = st.slider("Year Built", min_value=1800, max_value=2025, value=1935)
-        
+        borough_name = st.selectbox(
+            "Borough", 
+            options=list(BOROUGH_MAPPING.keys()),
+            help="Administrative division of NYC where the property is located"
+        )
+        borough = BOROUGH_MAPPING[borough_name]
+
+        tax_class = st.selectbox(
+            "Tax Class at Time of Sale", 
+            options=[1.0, 2.0, 4.0],
+            help="Classification used to determine applicable property tax rates"
+        )
+        year_built = st.slider(
+            "Year Built", 
+            min_value=1800, max_value=2025, value=1935,
+            help="The year the building was originally constructed"
+        )
+
     with col2:
-        gross_sqft = st.number_input("Gross Square Feet", min_value=100, max_value=700000, value=3000)
-        land_sqft = st.number_input("Land Square Feet", min_value=100, max_value=3500000, value=1500)
-        commercial_units = st.number_input("Commercial Units", min_value=0, max_value=175, value=0)
-        residential_units = st.number_input("Residential Units", min_value=0, max_value=800, value=2)
+        gross_sqft = st.number_input(
+            "Gross Square Feet", 
+            min_value=100, max_value=700000, value=3000,
+            help="Total floor area of the building (including all floors)"
+        )
+        land_sqft = st.number_input(
+            "Land Square Feet", 
+            min_value=100, max_value=3500000, value=1500,
+            help="Total land area that the property occupies"
+        )
+        commercial_units = st.number_input(
+            "Commercial Units", 
+            min_value=0, max_value=175, value=0,
+            help="Number of commercial spaces in the building"
+        )
+        residential_units = st.number_input(
+            "Residential Units", 
+            min_value=0, max_value=800, value=2,
+            help="Number of residential apartments or housing units"
+        )
 
     return pd.DataFrame.from_dict({
         "BOROUGH": [borough],
@@ -39,13 +77,20 @@ def get_user_input_inside_tab() -> pd.DataFrame:
 
 
 def individual_prediction_tab(model: Pipeline):
+    zero = 0
+    low = 500000
+    mid = 1500000
+
     input_df = get_user_input_inside_tab()
-    prediction = model.predict(input_df)[0]
+    prediction = max(model.predict(input_df)[0], 0)
 
     st.subheader("💵 Predicted Sale Price")
-    if prediction < 500000:
+    if prediction == 0:
+        st.error("⚠️ The model predicted a price of $0. " 
+                 + "This result is invalid or unreliable. Please review the input values.")
+    elif prediction < low:
         st.error(f"Estimated Price: ${prediction:,.0f} 😬 That's quite affordable for NYC.")
-    elif prediction < 1500000:
+    elif prediction < mid:
         st.warning(f"Estimated Price: ${prediction:,.0f} 🏙️ Mid-range NYC property.")
     else:
         st.success(f"Estimated Price: ${prediction:,.0f} 💎 You're in luxury territory!")
@@ -79,8 +124,14 @@ def batch_prediction_tab(model: Pipeline):
             elif st.button("Predict Prices"):
                 df_clean = preprocess_batch_data(df)
                 predictions = model.predict(df_clean)
+                cleaned_predictions = [max(p, 0) for p in predictions.astype(int)]
                 df_result = df.copy()
-                df_result["Predicted Price"] = predictions.astype(int)
+                df_result["Predicted Price"] = cleaned_predictions
+
+                # 🔍 show warning if there is any zero
+                if any(p == 0 for p in cleaned_predictions):
+                    st.warning("⚠️ One or more predictions resulted in $0. These values may be invalid. "
+                            "Please check the input data for potential inconsistencies.")
 
                 st.success("✅ Predictions completed!")
                 st.dataframe(df_result)
@@ -96,13 +147,13 @@ def batch_prediction_tab(model: Pipeline):
         st.info("Please upload a CSV file with property information.")
         st.caption("Sample format:")
         st.dataframe(pd.DataFrame({
-            "BOROUGH": [1, 2],
-            "TAX CLASS AT TIME OF SALE": [1, 2],
-            "YEAR BUILT": [1930, 2001],
-            "GROSS SQUARE FEET": [3000, 1500],
-            "LAND SQUARE FEET": [1500, 800],
-            "RESIDENTIAL UNITS": [2, 1],
-            "COMMERCIAL UNITS": [0, 1],
+            "BOROUGH": [1, 2, 5],
+            "TAX CLASS AT TIME OF SALE": [1, 2, 1],
+            "YEAR BUILT": [1930, 2001, 1989],
+            "GROSS SQUARE FEET": [3000, 1500, 1000],
+            "LAND SQUARE FEET": [1500, 800, 800],
+            "RESIDENTIAL UNITS": [2, 1, 3],
+            "COMMERCIAL UNITS": [0, 1, 0],
         }))
 
 # 🧠 Main
