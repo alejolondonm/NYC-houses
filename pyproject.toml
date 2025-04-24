@@ -1,4 +1,4 @@
-[project]
+[tool.poetry]
 name = "nyc-houses"
 version = "0.1.0"
 description = "NYC Houses project"
